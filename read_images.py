@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -30,7 +31,7 @@ class Sentinel2_MSI:
         self.B12 = 2190  # SWIR 2
 
     def read_image(self, image_path):
-        """Reads a Sentinel-2's MSI path 
+        """Reads a Sentinel-2's MSI path
         """
         self.image_name = image_path.stem
         self.raster = gdal.Open(str(image_path))
@@ -131,19 +132,20 @@ class Sentinel2_MSI:
         self.display_NIR(ax=ax[0, 3])
         self.display_SWIR1(ax=ax[1, 1])
         self.display_SWIR2(ax=ax[1, 2])
+        ax[1, 3].set_axis_off()
 
 
 if __name__ == "__main__":
-    paths = list(Path("AnnualCrop").rglob("*.tif"))
+    paths = list(Path(sys.argv[1]).rglob("*.tif"))
     test_path = paths[0]
     print(test_path)
     msi = Sentinel2_MSI()
     msi.read_image(test_path)
-    msi.display_RGB()
-    msi.display_Aerosols()
-    msi.display_Cirrus()
-    msi.display_WaterVapor()
-    msi.display_SWIR1()
-    msi.display_SWIR2()
+    # msi.display_RGB()
+    # msi.display_Aerosols()
+    # msi.display_Cirrus()
+    # msi.display_WaterVapor()
+    # msi.display_SWIR1()
+    # msi.display_SWIR2()
     msi.display_them()
     plt.show()
