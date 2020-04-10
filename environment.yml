@@ -1,0 +1,39 @@
+name: gis
+channels:
+    - default
+    - ioam
+    - ioos
+    - conda-forge
+    - anaconda
+    - activisiongamescience
+    - scitools/label/dev
+dependencies:
+    - python=3.6
+    - pip
+    - numpy
+    - pandas
+    - scipy
+    - gdal
+    - fiona
+    - shapely
+    - pyproj
+    - psycopg2
+    - matplotlib
+    - bokeh
+    - holoviews
+    - sphinx
+    - geopandas
+    - basemap [--no-deps]
+    - tweepy
+    - rasterio
+    - iris
+    - cartopy
+    - xarray
+    - geoviews
+    - mplleaflet
+    - flake8
+    - seawater
+    - gpxpy
+    - branca
+    - pip:
+        - https://github.com/python-visualization/folium/archive/master.zip
