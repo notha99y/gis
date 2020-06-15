@@ -7,8 +7,10 @@ channels:
     - anaconda
     - activisiongamescience
     - scitools/label/dev
+    - albumentations
+    - pytorch
 dependencies:
-    - python=3.6
+    - python=3.8
     - pip
     - numpy
     - pandas
@@ -35,5 +37,11 @@ dependencies:
     - seawater
     - gpxpy
     - branca
+    - cuda100
+    - cudnn
+    - tensorflow-gpu
+    - albumentations
+    - opencv
     - pip:
         - https://github.com/python-visualization/folium/archive/master.zip
+        - tqdm
