@@ -1,50 +1,52 @@
-import tensorflow as tf
+import cv2
+
+from albumentations import (
+    CLAHE,
+    Compose,
+    HorizontalFlip,
+    HueSaturationValue,
+    JpegCompression,
+    RandomBrightness,
+    RandomContrast,
+    RandomGamma,
+    Rotate,
+    ShiftScaleRotate,
+    ToFloat,
+)
+from data_generator import Sentinel2MSIDataGenerator
 from tensorflow.keras import Model
 from tensorflow.keras.applications.resnet50 import ResNet50
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
-from data_generator import Sentinel2MSIDataGenerator
-import cv2
-from albumentations import (
-        Compose,
-        HorizontalFlip,
-        Rotate,
-        CLAHE,
-        HueSaturationValue,
-        RandomBrightness,
-        RandomContrast,
-        RandomGamma,
-        JpegCompression,
-        ToFloat,
-        ShiftScaleRotate,
-    )
+
 
 def get_resnet50():
-    height, width, channel = (240,320,13)
+    height, width, channel = (240, 320, 13)
     num_of_classes = 10
 
     base_model = ResNet50(
-        input_shape = (height, width, channel),
-        weights = 'imagenet',
-        include_top = False,
-
+        input_shape=(height, width, channel),
+        weights="imagenet",
+        include_top=False,
     )
 
     x = base_model.output
     x = GlobalAveragePooling2D()(x)
-    x = Dense(1024, activation='relu')(x)
-    predictions = Dense(units=num_of_classes, activation='softmax')(x)
-    model = Model(inputs = base_model.input, outputs=predictions, name="ResNet50")
+    x = Dense(1024, activation="relu")(x)
+    predictions = Dense(units=num_of_classes, activation="softmax")(x)
+    model = Model(
+        inputs=base_model.input, outputs=predictions, name="ResNet50"
+    )
 
     model.summary()
 
     return model
 
 
-
-
 if __name__ == "__main__":
     model = get_resnet50()
-    model.compile(optimizer='sgd', loss='categorical_crossentropy', metrics=['accuracy'])
+    model.compile(
+        optimizer="sgd", loss="categorical_crossentropy", metrics=["accuracy"]
+    )
     AUGMENTATION_TRAIN = Compose(
         [
             HorizontalFlip(p=0.5),
@@ -70,4 +72,8 @@ if __name__ == "__main__":
         shuffle=True,
     )
 
-    model.fit(train_gen, epochs=25, steps_per_epoch=train_gen.n // train_gen.batch_size + 1)
+    model.fit(
+        train_gen,
+        epochs=25,
+        steps_per_epoch=train_gen.n // train_gen.batch_size + 1,
+    )
