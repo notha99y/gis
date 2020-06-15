@@ -1,3 +1,5 @@
+import os
+
 import cv2
 
 from albumentations import (
@@ -16,7 +18,52 @@ from albumentations import (
 from data_generator import Sentinel2MSIDataGenerator
 from tensorflow.keras import Model
 from tensorflow.keras.applications.resnet50 import ResNet50
-from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.layers import (
+    Conv2D,
+    Dense,
+    Dropout,
+    GlobalAveragePooling2D,
+    Input,
+    MaxPool2D,
+)
+
+os.environ["TF_FORCE_GPU_ALLOW_GROWTH"] = "true"  # for RTX GPUs
+
+
+def simple_cnn():
+    filter_dims = [32, 64, 128]
+    height, width, channel = (240, 320, 13)
+    num_of_classes = 10
+
+    inputs = Input((height, width, channel,))
+
+    _inputs = inputs
+
+    for filter_dim in filter_dims:
+        conv = Conv2D(
+            filter_dim,
+            3,
+            activation="relu",
+            padding="same",
+            kernel_initializer="glorot_uniform",
+        )(_inputs)
+        conv = Conv2D(
+            filter_dim,
+            3,
+            activation="relu",
+            padding="same",
+            kernel_initializer="glorot_uniform",
+        )(conv)
+
+        _inputs = MaxPool2D(pool_size=(2, 2))(conv)
+
+    drop = Dropout(0.5)(_inputs)
+    gap = GlobalAveragePooling2D()(drop)
+    outputs = Dense(num_of_classes, activation="softmax")(gap)
+
+    model = Model(inputs=inputs, outputs=outputs, name="SimpleCNN")
+
+    return model
 
 
 def get_resnet50():
@@ -43,7 +90,8 @@ def get_resnet50():
 
 
 if __name__ == "__main__":
-    model = get_resnet50()
+    # model = get_resnet50()
+    model = simple_cnn()
     model.compile(
         optimizer="sgd", loss="categorical_crossentropy", metrics=["accuracy"]
     )
