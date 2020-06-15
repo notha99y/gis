@@ -67,7 +67,7 @@ def simple_cnn():
 
 
 def get_resnet50():
-    height, width, channel = (240, 320, 13)
+    height, width, channel = (64, 64, 13)
     num_of_classes = 10
 
     base_model = ResNet50(
@@ -120,8 +120,8 @@ if __name__ == "__main__":
         shuffle=True,
     )
 
-    model.fit(
+    model.fit_generator(
         train_gen,
         epochs=25,
-        steps_per_epoch=train_gen.n // train_gen.batch_size + 1,
+        steps_per_epoch=train_gen.n // train_gen.batch_size,
     )
